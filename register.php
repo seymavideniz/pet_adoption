@@ -2,6 +2,9 @@
 // Sayfa başlığını tanımla
 $page_title = 'Kayıt Ol';
 
+// Veritabanı bağlantısı
+require_once 'includes/db.php';
+
 // Değişkenleri başlat
 $success_message = '';
 $error_message = '';
@@ -44,10 +47,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     // Hata yoksa kayıt işlemini tamamla
     if (empty($errors)) {
-        // Burada normalde veritabanına kayıt yapılır
-        $success_message = 'Kayıt işleminiz başarıyla tamamlandı! Giriş yapabilirsiniz.';
-        $name = '';
-        $email = '';
+        try {
+            // Email zaten kayıtlı mı kontrol et
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt->execute([$email]);
+            
+            if ($stmt->rowCount() > 0) {
+                $errors['email'] = 'Bu e-posta adresi zaten kayıtlı.';
+            } else {
+                // Şifreyi hashle
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                
+                // Kullanıcı adı oluştur (email'den)
+                $username = explode('@', $email)[0];
+                
+                // Veritabanına kaydet
+                $stmt = $pdo->prepare("INSERT INTO users (username, email, password, full_name, role, created_at) VALUES (?, ?, ?, ?, 'user', NOW())");
+                $stmt->execute([$username, $email, $hashed_password, $name]);
+                
+                $success_message = 'Kayıt işleminiz başarıyla tamamlandı! Giriş yapabilirsiniz.';
+                $name = '';
+                $email = '';
+            }
+        } catch (PDOException $e) {
+            $error_message = 'Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.';
+        }
     }
 }
 
@@ -83,6 +107,12 @@ require_once 'includes/header.php';
                     </div>
                 <?php endif; ?>
 
+                <?php if (!empty($error_message)): ?>
+                    <div class="alert alert-error" style="margin-bottom: var(--spacing-md);">
+                        <?php echo htmlspecialchars($error_message); ?>
+                    </div>
+                <?php endif; ?>
+
                 <form method="POST" action="register.php" class="login-form">
                     <!-- Ad Soyad -->
                     <div class="form-group">
@@ -91,7 +121,7 @@ require_once 'includes/header.php';
                             type="text" 
                             id="name" 
                             name="name" 
-                            class="form-input <?php echo isset($errors['name']) ? 'error' : ''; ?>"
+                            class="simple-input <?php echo isset($errors['name']) ? 'error' : ''; ?>"
                             value="<?php echo htmlspecialchars($name); ?>"
                             placeholder="Adınız ve soyadınız"
                             required
@@ -108,7 +138,7 @@ require_once 'includes/header.php';
                             type="email" 
                             id="email" 
                             name="email" 
-                            class="form-input <?php echo isset($errors['email']) ? 'error' : ''; ?>"
+                            class="simple-input <?php echo isset($errors['email']) ? 'error' : ''; ?>"
                             value="<?php echo htmlspecialchars($email); ?>"
                             placeholder="ornek@eposta.com"
                             required
@@ -125,7 +155,7 @@ require_once 'includes/header.php';
                             type="password" 
                             id="password" 
                             name="password" 
-                            class="form-input <?php echo isset($errors['password']) ? 'error' : ''; ?>"
+                            class="simple-input <?php echo isset($errors['password']) ? 'error' : ''; ?>"
                             placeholder="En az 6 karakter"
                             required
                         >
@@ -141,7 +171,7 @@ require_once 'includes/header.php';
                             type="password" 
                             id="password_confirm" 
                             name="password_confirm" 
-                            class="form-input <?php echo isset($errors['password_confirm']) ? 'error' : ''; ?>"
+                            class="simple-input <?php echo isset($errors['password_confirm']) ? 'error' : ''; ?>"
                             placeholder="Şifrenizi tekrar girin"
                             required
                         >

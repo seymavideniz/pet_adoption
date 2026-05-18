@@ -1,4 +1,15 @@
 <?php
+// Session başlat
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Kullanıcı bilgilerini al
+$is_logged_in = isset($_SESSION['user_id']);
+$user_name = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Kullanıcı';
+$user_id = $_SESSION['user_id'] ?? null;
+$is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+
 // Sayfa başlığını tanımla
 $page_title = 'Hayvan Detayları';
 
@@ -7,6 +18,27 @@ require_once 'includes/db.php';
 
 // URL'den pet id'yi al
 $pet_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Favori ekleme/çıkarma işlemi
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['toggle_favorite']) && $is_logged_in) {
+    try {
+        // Favori var mı kontrol et
+        $stmt = $pdo->prepare("SELECT id FROM favorites WHERE user_id = ? AND pet_id = ?");
+        $stmt->execute([$user_id, $pet_id]);
+        
+        if ($stmt->rowCount() > 0) {
+            // Favoriden çıkar
+            $stmt = $pdo->prepare("DELETE FROM favorites WHERE user_id = ? AND pet_id = ?");
+            $stmt->execute([$user_id, $pet_id]);
+        } else {
+            // Favoriye ekle
+            $stmt = $pdo->prepare("INSERT INTO favorites (user_id, pet_id) VALUES (?, ?)");
+            $stmt->execute([$user_id, $pet_id]);
+        }
+    } catch (PDOException $e) {
+        // Hata mesajı
+    }
+}
 
 // Veritabanından hayvan detaylarını çek
 try {
@@ -17,6 +49,14 @@ try {
     if (!$pet) {
         header('Location: sahiplen.php');
         exit;
+    }
+    
+    // Favori durumunu kontrol et
+    $is_favorite = false;
+    if ($is_logged_in) {
+        $stmt = $pdo->prepare("SELECT id FROM favorites WHERE user_id = ? AND pet_id = ?");
+        $stmt->execute([$user_id, $pet_id]);
+        $is_favorite = $stmt->rowCount() > 0;
     }
 } catch (PDOException $e) {
     $error_message = "Evcil hayvan detayları yüklenirken bir hata oluştu: " . $e->getMessage();
@@ -144,8 +184,31 @@ try {
                 <a class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary pb-1 cursor-pointer active:scale-95" href="sahiplen.php">Sahiplen</a>
                 <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95" href="#">Hakkımızda</a>
                 <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95" href="iletisim.php">İletişim</a>
+                <?php if ($is_logged_in && !$is_admin): ?>
+                    <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95" href="my-favorites.php">Patili Dostlarım</a>
+                <?php endif; ?>
             </nav>
-            <button class="font-button text-button uppercase bg-transparent border border-primary text-primary px-lg py-sm rounded-lg hover:bg-primary hover:text-white transition-all cursor-pointer active:scale-95" onclick="window.location.href='login.php'">GİRİŞ YAP</button>
+            <?php if ($is_logged_in): ?>
+                <!-- Kullanıcı giriş yapmış -->
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <?php if ($is_admin): ?>
+                        <a href="admin/dashboard.php" class="font-body-md text-primary font-semibold hover:opacity-80 transition-opacity">
+                            Admin Paneli
+                        </a>
+                    <?php endif; ?>
+                    <span class="font-body-md text-primary font-semibold">
+                        Hoş geldin, <?php echo htmlspecialchars($user_name); ?>
+                    </span>
+                    <button class="font-button text-button uppercase bg-[#dc3545] text-white px-lg py-sm rounded-lg hover:bg-[#c82333] transition-all cursor-pointer active:scale-95" onclick="window.location.href='logout.php'">
+                        ÇIKIŞ YAP
+                    </button>
+                </div>
+            <?php else: ?>
+                <!-- Kullanıcı giriş yapmamış -->
+                <button class="font-button text-button uppercase bg-transparent border border-primary text-primary px-lg py-sm rounded-lg hover:bg-primary hover:text-white transition-all cursor-pointer active:scale-95" onclick="window.location.href='login.php'">
+                    GİRİŞ YAP
+                </button>
+            <?php endif; ?>
         </div>
     </header>
 
@@ -181,9 +244,17 @@ try {
                         <span class="bg-secondary-container text-on-secondary-container px-md py-xs rounded-full font-label-md text-label-md">
                             <?php echo htmlspecialchars($pet['status'] ?? 'Sahiplenilmeyi Bekliyor'); ?>
                         </span>
-                        <span class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform" 
-                              onclick="toggleFavorite(this)"
-                              style="font-variation-settings: 'FILL' 0;">favorite</span>
+                        <?php if ($is_logged_in): ?>
+                            <form method="POST" id="favoriteForm" style="display: inline;">
+                                <input type="hidden" name="toggle_favorite" value="1">
+                                <button type="submit" class="bg-transparent border-0 p-0 cursor-pointer">
+                                    <span class="material-symbols-outlined text-<?php echo $is_favorite ? 'red-500' : 'primary'; ?> cursor-pointer hover:scale-110 transition-transform" 
+                                          style="font-variation-settings: 'FILL' <?php echo $is_favorite ? '1' : '0'; ?>; font-size: 32px;">
+                                        favorite
+                                    </span>
+                                </button>
+                            </form>
+                        <?php endif; ?>
                     </div>
                     <h1 class="font-display-lg text-display-lg text-primary">
                         <?php echo htmlspecialchars($pet['name']); ?>

@@ -1,3 +1,14 @@
+<?php
+// Session kontrolü
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Kullanıcı giriş yapmış mı kontrol et
+$is_logged_in = isset($_SESSION['user_id']);
+$user_name = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Kullanıcı';
+$is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+?>
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -126,11 +137,36 @@
                                 İletişim
                             </a>
                         </li>
+                        <?php if ($is_logged_in && !$is_admin): ?>
+                            <li class="nav-item">
+                                <a href="my-favorites.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'my-favorites.php' ? 'active' : ''; ?>">
+                                    Patili Dostlarım
+                                </a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </nav>
                 
                 <div class="header-actions">
-                    <a href="login.php" class="btn btn-login">Giriş Yap</a>
+                    <?php if ($is_logged_in): ?>
+                        <!-- Kullanıcı giriş yapmış -->
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <?php if ($is_admin): ?>
+                                <a href="admin/dashboard.php" style="color: #705738; text-decoration: none; font-weight: 600;">
+                                    Admin Paneli
+                                </a>
+                            <?php endif; ?>
+                            <span style="color: #705738; font-weight: 600;">
+                                Hoş geldin, <?php echo htmlspecialchars($user_name); ?>
+                            </span>
+                            <a href="logout.php" class="btn btn-login" style="background: #dc3545;">
+                                Çıkış Yap
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <!-- Kullanıcı giriş yapmamış -->
+                        <a href="login.php" class="btn btn-login">Giriş Yap</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

@@ -1,4 +1,14 @@
 <?php
+// Session başlat
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Kullanıcı bilgilerini al
+$is_logged_in = isset($_SESSION['user_id']);
+$user_name = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Kullanıcı';
+$is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+
 // Sayfa başlığını tanımla
 $page_title = 'PatiKapısı - Evcil Hayvan Sahiplendirme';
 
@@ -171,11 +181,33 @@ try {
                 <a class="nav-link-smooth text-on-surface-variant font-body-md text-body-md" href="#sahiplen">Sahiplen</a>
                 <a class="nav-link-smooth text-on-surface-variant font-body-md text-body-md" href="#hakkimizda">Hakkımızda</a>
                 <a class="nav-link-smooth text-on-surface-variant font-body-md text-body-md" href="#iletisim">İletişim</a>
+                <?php if ($is_logged_in && !$is_admin): ?>
+                    <a class="nav-link-smooth text-on-surface-variant font-body-md text-body-md" href="my-favorites.php">Patili Dostlarım</a>
+                <?php endif; ?>
             </nav>
-            <button class="bg-[#8B7355] text-white px-[32px] py-[12px] rounded-[8px] text-[15px] font-semibold hover:bg-[#725e45] transition-all duration-200 ease-in-out"
-                    onclick="window.location.href='login.php'">
-                Giriş Yap
-            </button>
+            <?php if ($is_logged_in): ?>
+                <!-- Kullanıcı giriş yapmış -->
+                <div class="flex items-center gap-4">
+                    <?php if ($is_admin): ?>
+                        <a href="admin/dashboard.php" class="text-[#8B7355] font-semibold hover:text-[#725e45] transition-colors">
+                            Admin Paneli
+                        </a>
+                    <?php endif; ?>
+                    <span class="text-[#8B7355] font-semibold">
+                        Hoş geldin, <?php echo htmlspecialchars($user_name); ?>
+                    </span>
+                    <button class="bg-[#dc3545] text-white px-[24px] py-[12px] rounded-[8px] text-[15px] font-semibold hover:bg-[#c82333] transition-all duration-200 ease-in-out"
+                            onclick="window.location.href='logout.php'">
+                        Çıkış Yap
+                    </button>
+                </div>
+            <?php else: ?>
+                <!-- Kullanıcı giriş yapmamış -->
+                <button class="bg-[#8B7355] text-white px-[32px] py-[12px] rounded-[8px] text-[15px] font-semibold hover:bg-[#725e45] transition-all duration-200 ease-in-out"
+                        onclick="window.location.href='login.php'">
+                    Giriş Yap
+                </button>
+            <?php endif; ?>
         </div>
     </header>
 
