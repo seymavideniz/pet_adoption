@@ -2,6 +2,12 @@
 // Sayfa başlığını tanımla
 $page_title = 'Giriş Yap';
 
+// Session başlat
+session_start();
+
+// Veritabanı bağlantısı
+require_once 'includes/db.php';
+
 // Değişkenleri başlat
 $error_message = '';
 $email = '';
@@ -29,9 +35,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     // Hata yoksa giriş işlemini kontrol et
     if (empty($errors)) {
-        // Burada normalde veritabanından kullanıcı kontrolü yapılır
-        // Örnek amaçlı sadece hata mesajı gösteriyoruz
-        $error_message = 'E-posta veya şifre hatalı.';
+        try {
+            // Kullanıcıyı veritabanından bul
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? OR username = ?");
+            $stmt->execute([$email, $email]);
+            $user = $stmt->fetch();
+            
+            // Kullanıcı bulundu mu ve şifre doğru mu kontrol et
+            if ($user && password_verify($password, $user['password'])) {
+                // Giriş başarılı - Session oluştur
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['full_name'] = $user['full_name'];
+                $_SESSION['role'] = $user['role'];
+                
+                // Remember me özelliği
+                if ($remember) {
+                    setcookie('user_email', $email, time() + (86400 * 30), '/'); // 30 gün
+                }
+                
+                // Admin ise admin paneline, değilse anasayfaya yönlendir
+                if ($user['role'] == 'admin') {
+                    header('Location: admin/dashboard.php');
+                } else {
+                    header('Location: index.php');
+                }
+                exit();
+            } else {
+                $error_message = 'E-posta veya şifre hatalı.';
+            }
+        } catch (PDOException $e) {
+            $error_message = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+        }
     }
 }
 
@@ -71,22 +107,15 @@ require_once 'includes/header.php';
                     <!-- E-posta -->
                     <div class="form-group">
                         <label for="email" class="form-label">E-posta Adresi</label>
-                        <div class="form-input-wrapper">
-                            <span class="form-input-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
-                            </span>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
-                                class="form-input form-input-with-icon <?php echo isset($errors['email']) ? 'error' : ''; ?>"
-                                value="<?php echo htmlspecialchars($email); ?>"
-                                placeholder="ornek@eposta.com"
-                                required
-                            >
-                        </div>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="simple-input <?php echo isset($errors['email']) ? 'error' : ''; ?>"
+                            value="<?php echo htmlspecialchars($email); ?>"
+                            placeholder="ornek@eposta.com"
+                            required
+                        >
                         <?php if (isset($errors['email'])): ?>
                             <span class="form-error"><?php echo htmlspecialchars($errors['email']); ?></span>
                         <?php endif; ?>
@@ -98,22 +127,14 @@ require_once 'includes/header.php';
                             <label for="password" class="form-label">Şifre</label>
                             <a href="#" class="forgot-password-link">Şifremi Unuttum</a>
                         </div>
-                        <div class="form-input-wrapper">
-                            <span class="form-input-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                    <path d="M7 11V7a5 5 0 0110 0v4"></path>
-                                </svg>
-                            </span>
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                class="form-input form-input-with-icon <?php echo isset($errors['password']) ? 'error' : ''; ?>"
-                                placeholder="••••••••"
-                                required
-                            >
-                        </div>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="simple-input <?php echo isset($errors['password']) ? 'error' : ''; ?>"
+                            placeholder="••••••••"
+                            required
+                        >
                         <?php if (isset($errors['password'])): ?>
                             <span class="form-error"><?php echo htmlspecialchars($errors['password']); ?></span>
                         <?php endif; ?>
