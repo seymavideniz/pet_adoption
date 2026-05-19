@@ -118,10 +118,10 @@ $page_title = 'Hakkımızda';
     <header class="bg-background sticky top-0 z-50">
         <div class="flex justify-between items-center max-w-[1280px] mx-auto px-gutter py-md">
             <div class="font-headline-lg text-headline-lg text-primary">
-                <a href="index.php">PatiKapısı</a>
+                <a href="../index.php">PatiKapısı</a>
             </div>
             <nav class="hidden md:flex gap-xl items-center">
-                <a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="index.php">Anasayfa</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="../index.php">Anasayfa</a>
                 <a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="sahiplen.php">Sahiplen</a>
                 <a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md text-body-md" href="hakkimizda.php">Hakkımızda</a>
                 <a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-body-md text-body-md" href="iletisim.php">İletişim</a>

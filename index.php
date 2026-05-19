@@ -1,4 +1,9 @@
 <?php
+/**
+ * Anasayfa (index.php)
+ * Sahiplendirilebilir hayvanları listeler ve site tanıtımını yapar
+ */
+
 // Session başlat
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -15,12 +20,13 @@ $page_title = 'PatiKapısı - Evcil Hayvan Sahiplendirme';
 // Veritabanı bağlantısını dahil et
 require_once 'includes/db.php';
 
-// Veritabanından evcil hayvanları çek
+// Veritabanından sahiplendirilebilir hayvanları çek (Son 6 hayvan)
 try {
     $stmt = $pdo->prepare("SELECT * FROM pets WHERE status = 'Sahiplendirilebilir' ORDER BY id DESC LIMIT 6");
     $stmt->execute();
     $pets = $stmt->fetchAll();
 } catch (PDOException $e) {
+    // Hata durumunda boş liste döndür
     $error_message = "Evcil hayvanlar yüklenirken bir hata oluştu: " . $e->getMessage();
     $pets = [];
 }
@@ -30,7 +36,8 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $page_title; ?></title>
+    <meta name="description" content="PatiKapısı - Evcil hayvan sahiplendirme platformu. Sevgi dolu dostlarınızla buluşun ve hayatlarına dokunun.">
+    <title><?php echo htmlspecialchars($page_title); ?></title>
     
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -176,35 +183,71 @@ try {
             <div class="font-headline-lg text-headline-lg text-primary">
                 <a href="#anasayfa">PatiKapısı</a>
             </div>
+            
+            <!-- Desktop Navigation -->
             <nav class="hidden md:flex gap-xl items-center">
                 <a class="nav-link-smooth text-on-surface-variant font-body-md text-body-md" href="#anasayfa">Anasayfa</a>
                 <a class="nav-link-smooth text-on-surface-variant font-body-md text-body-md" href="#sahiplen">Sahiplen</a>
                 <a class="nav-link-smooth text-on-surface-variant font-body-md text-body-md" href="#hakkimizda">Hakkımızda</a>
                 <a class="nav-link-smooth text-on-surface-variant font-body-md text-body-md" href="#iletisim">İletişim</a>
                 <?php if ($is_logged_in && !$is_admin): ?>
-                    <a class="nav-link-smooth text-on-surface-variant font-body-md text-body-md" href="my-favorites.php">Patili Dostlarım</a>
+                    <a class="nav-link-smooth text-on-surface-variant font-body-md text-body-md" href="pages/my-favorites.php">Patili Dostlarım</a>
                 <?php endif; ?>
             </nav>
-            <?php if ($is_logged_in): ?>
-                <!-- Kullanıcı giriş yapmış -->
-                <div class="flex items-center gap-4">
+            
+            <!-- Desktop Login/Logout Button -->
+            <div class="hidden md:flex items-center gap-4">
+                <?php if ($is_logged_in): ?>
                     <?php if ($is_admin): ?>
                         <a href="admin/dashboard.php" class="text-[#8B7355] font-semibold hover:text-[#725e45] transition-colors">
                             Admin Paneli
                         </a>
                     <?php endif; ?>
                     <button class="bg-[#8B7355] text-white px-[24px] py-[12px] rounded-[8px] text-[15px] font-semibold hover:bg-[#725e45] transition-all duration-200 ease-in-out"
-                            onclick="window.location.href='logout.php'">
+                            onclick="window.location.href='pages/logout.php'">
                         Çıkış Yap
                     </button>
-                </div>
-            <?php else: ?>
-                <!-- Kullanıcı giriş yapmamış -->
-                <button class="bg-[#8B7355] text-white px-[32px] py-[12px] rounded-[8px] text-[15px] font-semibold hover:bg-[#725e45] transition-all duration-200 ease-in-out"
-                        onclick="window.location.href='login.php'">
-                    Giriş Yap
-                </button>
-            <?php endif; ?>
+                <?php else: ?>
+                    <button class="bg-[#8B7355] text-white px-[32px] py-[12px] rounded-[8px] text-[15px] font-semibold hover:bg-[#725e45] transition-all duration-200 ease-in-out"
+                            onclick="window.location.href='pages/login.php'">
+                        Giriş Yap
+                    </button>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-primary" onclick="toggleMobileMenu()" id="mobile-menu-button">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="hidden md:hidden bg-white border-t border-gray-200 shadow-lg" id="mobile-menu">
+            <nav class="flex flex-col px-gutter py-md space-y-4">
+                <a class="text-on-surface-variant font-body-md hover:text-primary transition-colors" href="#anasayfa" onclick="toggleMobileMenu()">Anasayfa</a>
+                <a class="text-on-surface-variant font-body-md hover:text-primary transition-colors" href="#sahiplen" onclick="toggleMobileMenu()">Sahiplen</a>
+                <a class="text-on-surface-variant font-body-md hover:text-primary transition-colors" href="#hakkimizda" onclick="toggleMobileMenu()">Hakkımızda</a>
+                <a class="text-on-surface-variant font-body-md hover:text-primary transition-colors" href="#iletisim" onclick="toggleMobileMenu()">İletişim</a>
+                <?php if ($is_logged_in && !$is_admin): ?>
+                    <a class="text-on-surface-variant font-body-md hover:text-primary transition-colors" href="pages/my-favorites.php">Patili Dostlarım</a>
+                <?php endif; ?>
+                <?php if ($is_logged_in): ?>
+                    <?php if ($is_admin): ?>
+                        <a href="admin/dashboard.php" class="text-[#8B7355] font-semibold">Admin Paneli</a>
+                    <?php endif; ?>
+                    <button class="bg-[#8B7355] text-white px-[24px] py-[12px] rounded-[8px] text-[15px] font-semibold text-center"
+                            onclick="window.location.href='pages/logout.php'">
+                        Çıkış Yap
+                    </button>
+                <?php else: ?>
+                    <button class="bg-[#8B7355] text-white px-[32px] py-[12px] rounded-[8px] text-[15px] font-semibold text-center"
+                            onclick="window.location.href='pages/login.php'">
+                        Giriş Yap
+                    </button>
+                <?php endif; ?>
+            </nav>
         </div>
     </header>
 
@@ -254,9 +297,10 @@ try {
                                     <?php if (!empty($pet['image']) && file_exists('assets/images/' . $pet['image'])): ?>
                                         <img src="assets/images/<?php echo htmlspecialchars($pet['image']); ?>" 
                                              alt="<?php echo htmlspecialchars($pet['name']); ?>"
-                                             style="width: 100%; height: 100%; object-fit: cover; object-position: center center;">
+                                             class="pet-image"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                     <?php else: ?>
-                                        <div class="w-full h-full flex items-center justify-center text-8xl">
+                                        <div class="w-full h-full flex items-center justify-center text-8xl" role="img" aria-label="<?php echo htmlspecialchars($pet['type']); ?> görseli">
                                             <?php echo ($pet['type'] == 'Kedi') ? '🐱' : '🐶'; ?>
                                         </div>
                                     <?php endif; ?>
@@ -272,7 +316,7 @@ try {
                                     </p>
                                     
                                     <button class="w-full bg-primary text-on-primary py-md rounded-lg font-button text-button uppercase hover:opacity-90 transition-all cursor-pointer active:scale-95"
-                                            onclick="window.location.href='pet-detail.php?id=<?php echo $pet['id']; ?>'">
+                                            onclick="window.location.href='pages/pet-detail.php?id=<?php echo $pet['id']; ?>'">
                                         DETAYLARI GÖR
                                     </button>
                                 </div>
@@ -282,7 +326,7 @@ try {
                     
                     <div class="text-center mt-xl">
                         <button class="border-2 border-primary text-primary px-xxl py-md rounded-lg font-button text-button uppercase hover:bg-primary hover:text-on-primary transition-all cursor-pointer active:scale-95"
-                                onclick="window.location.href='sahiplen.php'">
+                                onclick="window.location.href='pages/sahiplen.php'">
                             TÜM HAYVANLARI GÖR
                         </button>
                     </div>
@@ -491,6 +535,20 @@ try {
     </main>
 
     <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuButton = document.getElementById('mobile-menu-button');
+            
+            if (mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.remove('hidden');
+                menuButton.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            } else {
+                mobileMenu.classList.add('hidden');
+                menuButton.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>';
+            }
+        }
+        
         // Header arka plan değiştirme (scroll'da)
         window.addEventListener('scroll', function() {
             const header = document.getElementById('header');

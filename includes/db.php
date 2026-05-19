@@ -1,12 +1,18 @@
 <?php
 /**
  * Veritabanı Bağlantı Dosyası
- * PDO kullanarak MySQL veritabanına güvenli bağlantı sağlar
+ * PDO (PHP Data Objects) kullanarak MySQL veritabanına güvenli bağlantı sağlar
+ * SQL Injection saldırılarına karşı prepared statements kullanır
  */
 
-// Hata raporlamayı aç (geliştirme aşamasında)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Hata raporlama (Production'da kapatılmalı)
+// Development için:
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+
+// Production için (şu anki ayar):
+error_reporting(0);
+ini_set('display_errors', 0);
 
 // Veritabanı bağlantı bilgileri
 define('DB_HOST', 'localhost');

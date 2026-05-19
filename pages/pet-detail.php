@@ -14,7 +14,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 $page_title = 'Hayvan Detayları';
 
 // Veritabanı bağlantısını dahil et
-require_once 'includes/db.php';
+require_once '../includes/db.php';
 
 // URL'den pet id'yi al
 $pet_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -171,16 +171,22 @@ try {
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+        .pet-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+        }
     </style>
 </head>
 <body class="bg-background text-on-background">
     <header class="bg-background dark:bg-background full-width top-0 sticky z-50">
         <div class="flex justify-between items-center max-w-[1280px] mx-auto px-gutter py-md">
             <div class="font-headline-lg text-headline-lg text-primary dark:text-primary-fixed">
-                <a href="index.php">PatiKapısı</a>
+                <a href="../index.php">PatiKapısı</a>
             </div>
             <nav class="hidden md:flex gap-xl">
-                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95" href="index.php">Anasayfa</a>
+                <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95" href="../index.php">Anasayfa</a>
                 <a class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary pb-1 cursor-pointer active:scale-95" href="sahiplen.php">Sahiplen</a>
                 <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95" href="#">Hakkımızda</a>
                 <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95" href="iletisim.php">İletişim</a>
@@ -192,7 +198,7 @@ try {
                 <!-- Kullanıcı giriş yapmış -->
                 <div style="display: flex; align-items: center; gap: 16px;">
                     <?php if ($is_admin): ?>
-                        <a href="admin/dashboard.php" class="font-body-md text-primary font-semibold hover:opacity-80 transition-opacity">
+                        <a href="../admin/dashboard.php" class="font-body-md text-primary font-semibold hover:opacity-80 transition-opacity">
                             Admin Paneli
                         </a>
                     <?php endif; ?>
@@ -221,10 +227,11 @@ try {
             <section class="grid grid-cols-1 md:grid-cols-12 gap-lg mb-xxl">
                 <div class="md:col-span-7">
                     <div class="relative aspect-[4/3] overflow-hidden rounded-xl shadow-sm bg-surface-container">
-                        <?php if (!empty($pet['image']) && file_exists('assets/images/' . $pet['image'])): ?>
+                        <?php if (!empty($pet['image']) && file_exists('../assets/images/' . $pet['image'])): ?>
                             <img alt="<?php echo htmlspecialchars($pet['name']); ?>" 
-                                 style="width: 100%; height: 100%; object-fit: cover; object-position: center center;" 
-                                 src="assets/images/<?php echo htmlspecialchars($pet['image']); ?>">
+                                 class="pet-image" 
+                                 src="../assets/images/<?php echo htmlspecialchars($pet['image']); ?>"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <?php else: ?>
                             <div class="w-full h-full flex items-center justify-center text-9xl">
                                 <?php 
@@ -358,11 +365,11 @@ try {
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-lg">
                     <?php for ($i = 1; $i <= 4; $i++): ?>
                         <div class="aspect-square overflow-hidden rounded-xl bg-surface-container-high">
-                            <?php if (!empty($pet['image']) && file_exists('assets/images/' . $pet['image'])): ?>
+                            <?php if (!empty($pet['image']) && file_exists('../assets/images/' . $pet['image'])): ?>
                                 <img alt="<?php echo htmlspecialchars($pet['name']); ?> - Fotoğraf <?php echo $i; ?>" 
-                                     style="width: 100%; height: 100%; object-fit: cover; object-position: center center; transition: transform 0.5s;" 
-                                     class="hover:scale-105 cursor-pointer" 
-                                     src="assets/images/<?php echo htmlspecialchars($pet['image']); ?>">
+                                     class="pet-image hover:scale-105 cursor-pointer" 
+                                     style="transition: transform 0.5s;" 
+                                     src="../assets/images/<?php echo htmlspecialchars($pet['image']); ?>">
                             <?php else: ?>
                                 <div class="w-full h-full flex items-center justify-center text-7xl hover:scale-105 transition-transform duration-500">
                                     <?php 

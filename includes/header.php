@@ -1,13 +1,24 @@
 <?php
-// Session kontrolü
+/**
+ * Header Component
+ * Tüm sayfalarda kullanılan ortak başlık bölümü
+ * Session kontrolü ve kullanıcı bilgilerini yönetir
+ */
+
+// Session kontrolü - Eğer session başlatılmamışsa başlat
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Kullanıcı giriş yapmış mı kontrol et
+// Kullanıcı giriş durumunu kontrol et
 $is_logged_in = isset($_SESSION['user_id']);
 $user_name = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Kullanıcı';
 $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+
+// Hangi dizinde olduğumuzu belirle (root mu pages/ içinde mi)
+$in_pages = (basename(dirname($_SERVER['SCRIPT_FILENAME'])) === 'pages');
+$path_prefix = $in_pages ? '../' : '';
+$pages_prefix = $in_pages ? '' : 'pages/';
 ?>
 <!DOCTYPE html>
 <html lang="tr">
@@ -95,9 +106,9 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
     </script>
     
     <!-- CSS Dosyaları -->
-    <link rel="stylesheet" href="assets/css/global.css">
-    <link rel="stylesheet" href="assets/css/layout.css">
-    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="<?php echo $path_prefix; ?>assets/css/global.css">
+    <link rel="stylesheet" href="<?php echo $path_prefix; ?>assets/css/layout.css">
+    <link rel="stylesheet" href="<?php echo $path_prefix; ?>assets/css/components.css">
     
     <style>
         .material-symbols-outlined {
@@ -110,7 +121,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <a href="index.php">
+                    <a href="<?php echo $path_prefix; ?>index.php">
                         <span class="logo-text">PatiKapısı</span>
                     </a>
                 </div>
@@ -118,28 +129,28 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                 <nav class="main-nav">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a href="index.php#home" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' && !isset($_GET['section']) ? 'active' : ''; ?>">
+                            <a href="<?php echo $path_prefix; ?>index.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' && !isset($_GET['section']) ? 'active' : ''; ?>">
                                 Anasayfa
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="index.php#sahiplen" class="nav-link">
+                            <a href="<?php echo $pages_prefix; ?>sahiplen.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'sahiplen.php' ? 'active' : ''; ?>">
                                 Sahiplen
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="index.php#hakkimizda" class="nav-link">
+                            <a href="<?php echo $pages_prefix; ?>hakkimizda.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'hakkimizda.php' ? 'active' : ''; ?>">
                                 Hakkımızda
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="index.php#iletisim" class="nav-link">
+                            <a href="<?php echo $pages_prefix; ?>iletisim.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'iletisim.php' ? 'active' : ''; ?>">
                                 İletişim
                             </a>
                         </li>
                         <?php if ($is_logged_in && !$is_admin): ?>
                             <li class="nav-item">
-                                <a href="my-favorites.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'my-favorites.php' ? 'active' : ''; ?>">
+                                <a href="<?php echo $pages_prefix; ?>my-favorites.php" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'my-favorites.php' ? 'active' : ''; ?>">
                                     Patili Dostlarım
                                 </a>
                             </li>
@@ -152,17 +163,17 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                         <!-- Kullanıcı giriş yapmış -->
                         <div style="display: flex; align-items: center; gap: 16px;">
                             <?php if ($is_admin): ?>
-                                <a href="admin/dashboard.php" style="color: #705738; text-decoration: none; font-weight: 600;">
+                                <a href="<?php echo $path_prefix; ?>admin/dashboard.php" style="color: #705738; text-decoration: none; font-weight: 600;">
                                     Admin Paneli
                                 </a>
                             <?php endif; ?>
-                            <a href="logout.php" class="btn btn-login">
+                            <a href="<?php echo $pages_prefix; ?>logout.php" class="btn btn-login">
                                 Çıkış Yap
                             </a>
                         </div>
                     <?php else: ?>
                         <!-- Kullanıcı giriş yapmamış -->
-                        <a href="login.php" class="btn btn-login">Giriş Yap</a>
+                        <a href="<?php echo $pages_prefix; ?>login.php" class="btn btn-login">Giriş Yap</a>
                     <?php endif; ?>
                 </div>
             </div>

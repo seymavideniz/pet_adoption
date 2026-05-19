@@ -3,7 +3,7 @@
 $page_title = 'Kayıt Ol';
 
 // Veritabanı bağlantısı
-require_once 'includes/db.php';
+require_once '../includes/db.php';
 
 // Değişkenleri başlat
 $success_message = '';
@@ -76,15 +76,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Header dosyasını dahil et
-require_once 'includes/header.php';
+require_once '../includes/header.php';
 ?>
 
 <main class="login-page">
     <div class="login-container">
         <!-- Sol Taraf - Görsel ve Metin -->
-        <div class="login-image-section" style="background-image: url('assets/images/girisyap.JPG');">
+        <div class="login-image-section" style="background-image: url('../assets/images/girisyap.jpg');">
             <div class="login-image-content">
-                <h2 class="login-image-title" style="color: #FFDDB7; text-shadow: 2px 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);">Yeni bir dost,<br>yeni bir hikaye.</h2>
+                <h2 class="login-image-title">Yeni bir dost,<br>yeni bir hikaye.</h2>
             </div>
         </div>
 
@@ -93,7 +93,7 @@ require_once 'includes/header.php';
             <div class="login-form-wrapper">
                 <!-- Logo İkonu -->
                 <div class="login-icon">
-                    <img src="assets/images/ikon.JPG" alt="Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                    <img src="../assets/images/ikon.jpg" alt="PatiKapısı Logo">
                 </div>
 
                 <h1 class="login-title">Kayıt Olun</h1>
@@ -198,5 +198,5 @@ require_once 'includes/header.php';
 
 <?php
 // Footer dosyasını dahil et
-require_once 'includes/footer.php';
+require_once '../includes/footer.php';
 ?>

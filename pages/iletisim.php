@@ -63,7 +63,7 @@ if (!empty($pet_name)) {
 }
 
 // Header dosyasını dahil et
-require_once 'includes/header.php';
+require_once '../includes/header.php';
 ?>
 
 <main>
@@ -94,7 +94,7 @@ require_once 'includes/header.php';
         <div class="contact-container">
             <!-- İletişim Formu -->
             <section class="contact-form-section">
-                <form method="POST" action="iletisim.php" style="background: white; padding: var(--spacing-lg); border-radius: var(--radius-lg); box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                <form method="POST" action="iletisim.php" class="contact-form-card">
                     <!-- Ad Soyad -->
                     <div class="form-group">
                         <label for="name" class="form-label">
@@ -141,10 +141,9 @@ require_once 'includes/header.php';
                         <textarea 
                             id="message" 
                             name="message" 
-                            class="form-textarea <?php echo isset($errors['message']) ? 'error' : ''; ?>"
+                            class="form-textarea form-textarea-large <?php echo isset($errors['message']) ? 'error' : ''; ?>"
                             placeholder="Merhaba, Daisy isimli evcil hayvanı sahiplenmek istiyorum. Detaylı bilgi alabilir miyim?"
                             required
-                            style="min-height: 250px;"
                         ><?php echo htmlspecialchars($message); ?></textarea>
                         <?php if (isset($errors['message'])): ?>
                             <span class="form-error"><?php echo htmlspecialchars($errors['message']); ?></span>
@@ -205,7 +204,7 @@ require_once 'includes/header.php';
 
                 <!-- Görsel Kartı -->
                 <div class="contact-image-card">
-                    <img src="assets/images/onlaricin.jpg" alt="Evcil Hayvan" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <img src="../assets/images/onlaricin.jpg" alt="Evcil Hayvan" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; font-size: 5rem;">
                         🐶
                     </div>
@@ -217,5 +216,5 @@ require_once 'includes/header.php';
 
 <?php
 // Footer dosyasını dahil et
-require_once 'includes/footer.php';
+require_once '../includes/footer.php';
 ?>

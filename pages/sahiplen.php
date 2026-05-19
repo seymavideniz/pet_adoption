@@ -1,60 +1,32 @@
 <?php
-// Session başlat
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// Sayfa başlığını tanımla
+$page_title = 'Sahiplen';
 
-// Giriş kontrolü
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit();
-}
-
-$user_id = $_SESSION['user_id'];
-$page_title = 'Patili Dostlarım';
-
-// Veritabanı bağlantısı
-require_once 'includes/db.php';
-
-// Favoriden çıkarma işlemi
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['remove_favorite'])) {
-    $pet_id = intval($_POST['pet_id']);
-    try {
-        $stmt = $pdo->prepare("DELETE FROM favorites WHERE user_id = ? AND pet_id = ?");
-        $stmt->execute([$user_id, $pet_id]);
-        // Sayfayı yenile
-        header('Location: my-favorites.php');
-        exit();
-    } catch (PDOException $e) {
-        $error_message = "Favoriden çıkarılırken bir hata oluştu.";
-    }
-}
-
-// Favori hayvanları getir
-try {
-    $stmt = $pdo->prepare("
-        SELECT p.* 
-        FROM favorites f 
-        INNER JOIN pets p ON f.pet_id = p.id 
-        WHERE f.user_id = ? 
-        ORDER BY f.created_at DESC
-    ");
-    $stmt->execute([$user_id]);
-    $favorites = $stmt->fetchAll();
-} catch (PDOException $e) {
-    $error_message = "Favoriler yüklenirken bir hata oluştu: " . $e->getMessage();
-    $favorites = [];
-}
+// Veritabanı bağlantısını dahil et
+require_once '../includes/db.php';
 
 // Header dosyasını dahil et
-require_once 'includes/header.php';
+require_once '../includes/header.php';
+
+// Veritabanından evcil hayvanları çek
+try {
+    $stmt = $pdo->prepare("SELECT * FROM pets ORDER BY id DESC");
+    $stmt->execute();
+    $pets = $stmt->fetchAll();
+} catch (PDOException $e) {
+    $error_message = "Evcil hayvanlar yüklenirken bir hata oluştu: " . $e->getMessage();
+    $pets = [];
+}
 ?>
 
 <main>
     <!-- Hero Section -->
     <section class="page-hero">
         <div class="container">
-            <h1 class="page-hero-title">Patili Dostlarım</h1>
+            <h1 class="page-hero-title">Yeni Dostunu Bul</h1>
+            <p class="page-hero-subtitle">
+                Sahiplenmeyi bekleyen binlerce minik dostumuz arasından size en uygun derin seçin ve yeni bir hayata kapı aralayın.
+            </p>
         </div>
     </section>
 
@@ -65,45 +37,43 @@ require_once 'includes/header.php';
             </div>
         <?php endif; ?>
 
-        <?php if (empty($favorites)): ?>
+        <?php if (empty($pets)): ?>
             <div class="alert alert-info">
                 <p style="text-align: center; margin: 0;">
-                    Henüz patili dostunuz yok. 
-                    <a href="sahiplen.php" style="color: #705738; font-weight: 600; text-decoration: underline;">Hayvanları keşfedin</a> ve dostlarınıza ekleyin!
+                    Şu anda sahiplendirilmeyi bekleyen evcil hayvan bulunmamaktadır. 
+                    Lütfen daha sonra tekrar kontrol edin.
                 </p>
             </div>
         <?php else: ?>
-            <!-- Favori Hayvanlar Grid -->
+            <!-- Evcil Hayvanlar Grid -->
             <section>
                 <div class="grid grid-auto">
-                    <?php foreach ($favorites as $pet): ?>
+                    <?php foreach ($pets as $pet): ?>
                         <article class="card pet-card">
                             <div class="card-image">
                                 <!-- Pet Type Badge -->
                                 <span class="pet-type-badge">
                                     <?php 
-                                    $type = $pet['type'] ?? 'HAYVAN';
+                                    $type = $pet['type'] ?? 'Hayvan';
                                     $type = str_replace(['Ö', 'ö', 'Ü', 'ü', 'Ş', 'ş', 'İ', 'ı', 'Ğ', 'ğ', 'Ç', 'ç'], 
                                                       ['O', 'o', 'U', 'u', 'S', 's', 'I', 'i', 'G', 'g', 'C', 'c'], $type);
                                     echo strtoupper(htmlspecialchars($type));
                                     ?>
                                 </span>
                                 
-                                <!-- Favorite Icon (Already Favorited - Clickable to Remove) -->
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="remove_favorite" value="1">
-                                    <input type="hidden" name="pet_id" value="<?php echo $pet['id']; ?>">
-                                    <button type="submit" class="favorite-icon active" style="border: none; background: transparent; padding: 0; cursor: pointer;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                                        </svg>
-                                    </button>
-                                </form>
+                                <!-- Favorite Icon -->
+                                <div class="favorite-icon" onclick="toggleFavorite(this)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                    </svg>
+                                </div>
                                 
                                 <!-- Pet Image -->
-                                <?php if (!empty($pet['image']) && file_exists('assets/images/' . $pet['image'])): ?>
-                                    <img src="assets/images/<?php echo htmlspecialchars($pet['image']); ?>" 
-                                         alt="<?php echo htmlspecialchars($pet['name'] ?? 'Evcil Hayvan'); ?>">
+                                <?php if (!empty($pet['image']) && file_exists('../assets/images/' . $pet['image'])): ?>
+                                    <img src="../assets/images/<?php echo htmlspecialchars($pet['image']); ?>" 
+                                         alt="<?php echo htmlspecialchars($pet['name'] ?? 'Evcil Hayvan'); ?>"
+                                         class="pet-image"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <?php else: ?>
                                     <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 5rem;">
                                         <?php 
@@ -150,11 +120,34 @@ require_once 'includes/header.php';
                     <?php endforeach; ?>
                 </div>
             </section>
+            
+            <!-- Pagination -->
+            <div class="pagination">
+                <button class="pagination-btn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
         <?php endif; ?>
     </div>
 </main>
 
+<script>
+function toggleFavorite(element) {
+    element.classList.toggle('active');
+}
+</script>
+
 <?php
 // Footer dosyasını dahil et
-require_once 'includes/footer.php';
+require_once '../includes/footer.php';
 ?>

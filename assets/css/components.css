@@ -1,9 +1,21 @@
 /**
  * Components CSS - Butonlar, Kartlar, Formlar
+ * PatiKapısı Evcil Hayvan Sahiplendirme Projesi
+ * 
+ * İçindekiler:
+ * 1. Buttons (Butonlar)
+ * 2. Cards (Kartlar - Pet Card, Feature Card)
+ * 3. Forms (Formlar - Input, Textarea, Select)
+ * 4. Alerts (Uyarı Mesajları)
+ * 5. Badges (Rozetler)
+ * 6. Pagination (Sayfalama)
+ * 7. Login/Register Page Styles
+ * 8. Contact Page Styles
+ * 9. Pet Detail Page Styles
  */
 
 /* ============================================
-   Buttons
+   Buttons - Tüm buton stilleri
    ============================================ */
 
 .btn {
@@ -370,6 +382,10 @@
     min-height: 120px;
 }
 
+.form-textarea-large {
+    min-height: 260px;
+}
+
 .form-error {
     color: var(--color-error);
     font-size: var(--font-size-small);
@@ -562,6 +578,13 @@
     flex-direction: column;
 }
 
+.contact-form-card {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
 .contact-info-section {
     display: flex;
     flex-direction: column;
@@ -700,7 +723,9 @@
 }
 
 .login-image-section {
-    background: url('../images/login-dog.jpg') center/cover no-repeat, linear-gradient(135deg, #8B7355, #6d5a43);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     padding: var(--spacing-xl);
     display: flex;
     align-items: flex-end;
@@ -729,7 +754,24 @@
     font-weight: 700;
     line-height: 1.3;
     margin-bottom: var(--spacing-md);
-    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    color: #FFDDB7;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* Login Icon with Image */
+.login-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Pet Image Standardization */
+.pet-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
 }
 
 .login-image-text {
