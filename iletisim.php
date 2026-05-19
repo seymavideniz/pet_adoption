@@ -142,9 +142,9 @@ require_once 'includes/header.php';
                             id="message" 
                             name="message" 
                             class="form-textarea <?php echo isset($errors['message']) ? 'error' : ''; ?>"
-                            placeholder="Size nasıl yardımcı olabiliriz?"
+                            placeholder="Merhaba, Daisy isimli evcil hayvanı sahiplenmek istiyorum. Detaylı bilgi alabilir miyim?"
                             required
-                            style="min-height: 150px;"
+                            style="min-height: 250px;"
                         ><?php echo htmlspecialchars($message); ?></textarea>
                         <?php if (isset($errors['message'])): ?>
                             <span class="form-error"><?php echo htmlspecialchars($errors['message']); ?></span>
