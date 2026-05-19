@@ -82,9 +82,9 @@ require_once 'includes/header.php';
 <main class="login-page">
     <div class="login-container">
         <!-- Sol Taraf - Görsel ve Metin -->
-        <div class="login-image-section">
+        <div class="login-image-section" style="background-image: url('assets/images/girisyap.JPG');">
             <div class="login-image-content">
-                <h2 class="login-image-title">Yeni bir dost,<br>yeni bir hikaye.</h2>
+                <h2 class="login-image-title" style="color: #FFDDB7; text-shadow: 2px 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);">Yeni bir dost,<br>yeni bir hikaye.</h2>
             </div>
         </div>
 
@@ -93,9 +93,7 @@ require_once 'includes/header.php';
             <div class="login-form-wrapper">
                 <!-- Logo İkonu -->
                 <div class="login-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="#8B7355">
-                        <path d="M4.5 12c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5zm13.5 0c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20z"/>
-                    </svg>
+                    <img src="assets/images/ikon.JPG" alt="Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                 </div>
 
                 <h1 class="login-title">Kayıt Olun</h1>
