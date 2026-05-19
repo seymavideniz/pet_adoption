@@ -78,9 +78,9 @@ require_once 'includes/header.php';
 <main class="login-page">
     <div class="login-container">
         <!-- Sol Taraf - Görsel ve Metin -->
-        <div class="login-image-section">
+        <div class="login-image-section" style="background-image: url('assets/images/girisyap.JPG');">
             <div class="login-image-content">
-                <h2 class="login-image-title">Yeni bir dost,<br>yeni bir hikaye.</h2>
+                <h2 class="login-image-title" style="color: #FFDDB7; text-shadow: 2px 2px 8px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);">Yeni bir dost,<br>yeni bir hikaye.</h2>
             </div>
         </div>
 
