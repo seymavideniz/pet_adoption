@@ -201,6 +201,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
 }
 
 .pet-card .pet-type-badge {
@@ -627,6 +628,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
 }
 
 .contact-image-text {
@@ -1037,6 +1039,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
 }
 
 .pet-detail-placeholder {
@@ -1298,6 +1301,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
 }
 
 .gallery-placeholder {

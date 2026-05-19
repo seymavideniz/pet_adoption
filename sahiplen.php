@@ -53,7 +53,12 @@ try {
                             <div class="card-image">
                                 <!-- Pet Type Badge -->
                                 <span class="pet-type-badge">
-                                    <?php echo strtoupper(htmlspecialchars($pet['type'] ?? 'Hayvan')); ?>
+                                    <?php 
+                                    $type = $pet['type'] ?? 'Hayvan';
+                                    $type = str_replace(['Ö', 'ö', 'Ü', 'ü', 'Ş', 'ş', 'İ', 'ı', 'Ğ', 'ğ', 'Ç', 'ç'], 
+                                                      ['O', 'o', 'U', 'u', 'S', 's', 'I', 'i', 'G', 'g', 'C', 'c'], $type);
+                                    echo strtoupper(htmlspecialchars($type));
+                                    ?>
                                 </span>
                                 
                                 <!-- Favorite Icon -->
@@ -66,7 +71,8 @@ try {
                                 <!-- Pet Image -->
                                 <?php if (!empty($pet['image']) && file_exists('assets/images/' . $pet['image'])): ?>
                                     <img src="assets/images/<?php echo htmlspecialchars($pet['image']); ?>" 
-                                         alt="<?php echo htmlspecialchars($pet['name'] ?? 'Evcil Hayvan'); ?>">
+                                         alt="<?php echo htmlspecialchars($pet['name'] ?? 'Evcil Hayvan'); ?>"
+                                         style="width: 100%; height: 100%; object-fit: cover; object-position: center center;">
                                 <?php else: ?>
                                     <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 5rem;">
                                         <?php 

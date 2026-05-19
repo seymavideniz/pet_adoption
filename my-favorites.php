@@ -81,7 +81,12 @@ require_once 'includes/header.php';
                             <div class="card-image">
                                 <!-- Pet Type Badge -->
                                 <span class="pet-type-badge">
-                                    <?php echo strtoupper(htmlspecialchars($pet['type'] ?? 'HAYVAN')); ?>
+                                    <?php 
+                                    $type = $pet['type'] ?? 'HAYVAN';
+                                    $type = str_replace(['Ö', 'ö', 'Ü', 'ü', 'Ş', 'ş', 'İ', 'ı', 'Ğ', 'ğ', 'Ç', 'ç'], 
+                                                      ['O', 'o', 'U', 'u', 'S', 's', 'I', 'i', 'G', 'g', 'C', 'c'], $type);
+                                    echo strtoupper(htmlspecialchars($type));
+                                    ?>
                                 </span>
                                 
                                 <!-- Favorite Icon (Already Favorited - Clickable to Remove) -->

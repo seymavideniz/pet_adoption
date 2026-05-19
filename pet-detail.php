@@ -196,10 +196,7 @@ try {
                             Admin Paneli
                         </a>
                     <?php endif; ?>
-                    <span class="font-body-md text-primary font-semibold">
-                        Hoş geldin, <?php echo htmlspecialchars($user_name); ?>
-                    </span>
-                    <button class="font-button text-button uppercase bg-[#dc3545] text-white px-lg py-sm rounded-lg hover:bg-[#c82333] transition-all cursor-pointer active:scale-95" onclick="window.location.href='logout.php'">
+                    <button class="font-button text-button uppercase bg-primary text-white px-lg py-sm rounded-lg hover:opacity-90 transition-all cursor-pointer active:scale-95" onclick="window.location.href='logout.php'">
                         ÇIKIŞ YAP
                     </button>
                 </div>
@@ -226,7 +223,7 @@ try {
                     <div class="relative aspect-[4/3] overflow-hidden rounded-xl shadow-sm bg-surface-container">
                         <?php if (!empty($pet['image']) && file_exists('assets/images/' . $pet['image'])): ?>
                             <img alt="<?php echo htmlspecialchars($pet['name']); ?>" 
-                                 class="w-full h-full object-cover" 
+                                 style="width: 100%; height: 100%; object-fit: cover; object-position: center center;" 
                                  src="assets/images/<?php echo htmlspecialchars($pet['image']); ?>">
                         <?php else: ?>
                             <div class="w-full h-full flex items-center justify-center text-9xl">
@@ -363,7 +360,8 @@ try {
                         <div class="aspect-square overflow-hidden rounded-xl bg-surface-container-high">
                             <?php if (!empty($pet['image']) && file_exists('assets/images/' . $pet['image'])): ?>
                                 <img alt="<?php echo htmlspecialchars($pet['name']); ?> - Fotoğraf <?php echo $i; ?>" 
-                                     class="w-full h-full object-cover hover:scale-105 transition-transform duration-500 cursor-pointer" 
+                                     style="width: 100%; height: 100%; object-fit: cover; object-position: center center; transition: transform 0.5s;" 
+                                     class="hover:scale-105 cursor-pointer" 
                                      src="assets/images/<?php echo htmlspecialchars($pet['image']); ?>">
                             <?php else: ?>
                                 <div class="w-full h-full flex items-center justify-center text-7xl hover:scale-105 transition-transform duration-500">

@@ -156,10 +156,7 @@ $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
                                     Admin Paneli
                                 </a>
                             <?php endif; ?>
-                            <span style="color: #705738; font-weight: 600;">
-                                Hoş geldin, <?php echo htmlspecialchars($user_name); ?>
-                            </span>
-                            <a href="logout.php" class="btn btn-login" style="background: #dc3545;">
+                            <a href="logout.php" class="btn btn-login">
                                 Çıkış Yap
                             </a>
                         </div>

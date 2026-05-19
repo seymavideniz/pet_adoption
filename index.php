@@ -193,10 +193,7 @@ try {
                             Admin Paneli
                         </a>
                     <?php endif; ?>
-                    <span class="text-[#8B7355] font-semibold">
-                        Hoş geldin, <?php echo htmlspecialchars($user_name); ?>
-                    </span>
-                    <button class="bg-[#dc3545] text-white px-[24px] py-[12px] rounded-[8px] text-[15px] font-semibold hover:bg-[#c82333] transition-all duration-200 ease-in-out"
+                    <button class="bg-[#8B7355] text-white px-[24px] py-[12px] rounded-[8px] text-[15px] font-semibold hover:bg-[#725e45] transition-all duration-200 ease-in-out"
                             onclick="window.location.href='logout.php'">
                         Çıkış Yap
                     </button>
@@ -246,13 +243,18 @@ try {
                             <div class="bg-white rounded-xl overflow-hidden soft-shadow hover:shadow-2xl transition-shadow duration-300">
                                 <div class="relative aspect-[4/3] overflow-hidden bg-surface-container">
                                     <span class="absolute top-md left-md z-10 bg-secondary-container text-on-secondary-container px-md py-xs rounded-full font-label-md text-label-md">
-                                        <?php echo strtoupper(htmlspecialchars($pet['type'] ?? 'HAYVAN')); ?>
+                                        <?php 
+                                        $type = $pet['type'] ?? 'HAYVAN';
+                                        $type = str_replace(['Ö', 'ö', 'Ü', 'ü', 'Ş', 'ş', 'İ', 'ı', 'Ğ', 'ğ', 'Ç', 'ç'], 
+                                                          ['O', 'o', 'U', 'u', 'S', 's', 'I', 'i', 'G', 'g', 'C', 'c'], $type);
+                                        echo strtoupper(htmlspecialchars($type));
+                                        ?>
                                     </span>
                                     
                                     <?php if (!empty($pet['image']) && file_exists('assets/images/' . $pet['image'])): ?>
                                         <img src="assets/images/<?php echo htmlspecialchars($pet['image']); ?>" 
                                              alt="<?php echo htmlspecialchars($pet['name']); ?>"
-                                             class="w-full h-full object-cover">
+                                             style="width: 100%; height: 100%; object-fit: cover; object-position: center center;">
                                     <?php else: ?>
                                         <div class="w-full h-full flex items-center justify-center text-8xl">
                                             <?php echo ($pet['type'] == 'Kedi') ? '🐱' : '🐶'; ?>
