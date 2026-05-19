@@ -1,14 +1,14 @@
-# 🐾 Evcil Hayvan Sahiplendirme Sistemi
+# Evcil Hayvan Sahiplendirme Sistemi
 
 PHP ve MySQL ile geliştirilmiş evcil hayvan sahiplendirme platformu.
 
-## 🚀 Kurulum
+## Kurulum
 
 1. XAMPP'te Apache ve MySQL'i başlatın
 2. `database.sql` dosyasını phpMyAdmin'de çalıştırın
 3. `http://localhost/pet_adoption` adresini açın
 
-## ✨ Özellikler
+## Özellikler
 
 - Kullanıcı kayıt/giriş sistemi
 - Admin paneli
@@ -16,6 +16,6 @@ PHP ve MySQL ile geliştirilmiş evcil hayvan sahiplendirme platformu.
 - Favori sistemi
 - İletişim formu
 
-## 🛠️ Teknolojiler
+## Teknolojiler
 
 PHP • MySQL • HTML5 • CSS3 • JavaScript
