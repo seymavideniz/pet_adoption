@@ -3,23 +3,13 @@
  * Veritabanı Bağlantı Dosyası
  * PDO (PHP Data Objects) kullanarak MySQL veritabanına güvenli bağlantı sağlar
  * SQL Injection saldırılarına karşı prepared statements kullanır
+ * 
+ * Not: Bu dosya config.php'den yapılandırma değerlerini alır
+ * config.php ise .env dosyasından değerleri okur
  */
 
-// Hata raporlama (Production'da kapatılmalı)
-// Development için:
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
-
-// Production için (şu anki ayar):
-error_reporting(0);
-ini_set('display_errors', 0);
-
-// Veritabanı bağlantı bilgileri
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'pet_adoption');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_CHARSET', 'utf8mb4');
+// Yapılandırma dosyasını dahil et
+require_once __DIR__ . '/../config.php';
 
 try {
     // PDO örneği oluştur
@@ -34,5 +24,9 @@ try {
     
 } catch (PDOException $e) {
     // Hata durumunda kullanıcı dostu mesaj göster
-    die("Veritabanı bağlantı hatası: " . $e->getMessage());
+    if (APP_ENV === 'development') {
+        die("Veritabanı bağlantı hatası: " . $e->getMessage());
+    } else {
+        die("Veritabanı bağlantı hatası oluştu. Lütfen daha sonra tekrar deneyin.");
+    }
 }

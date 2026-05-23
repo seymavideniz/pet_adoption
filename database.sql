@@ -1,12 +1,3 @@
--- Evcil Hayvan Sahiplendirme Veritabanı
--- Veritabanı ve Tablo Yapısı
-
--- Veritabanını oluştur
-CREATE DATABASE IF NOT EXISTS pet_adoption CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- Veritabanını kullan
-USE pet_adoption;
-
 -- Evcil hayvanlar tablosu
 CREATE TABLE IF NOT EXISTS pets (
     id INT AUTO_INCREMENT PRIMARY KEY,

@@ -53,4 +53,10 @@ tmp/
 
 # Environment files (sensitive data)
 .env
+.env.local
+.env.*.local
 config.local.php
+
+# Composer
+/vendor/
+composer.lock
